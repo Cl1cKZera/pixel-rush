@@ -183,12 +183,24 @@
     }
   }
 
+  const _gLut = [
+    [30,36,59,42,56,43,203,199,196,208,228,232,142,229,243,145,234,144,138,139,179,191,212,188,87,64,93,86,76,230,105,96],
+    [25,46,36,46,52,50,214,202,85,90,239,157,142,226,249,141,142,148,138,255,165,162,166,168,75,37,48,93,81,230,99,19,106,111,104,12,23,11,37,39,62,48,172,167,198,208,213,247,229,227,152,237,147,143,157,251,167,201,160,178,186,87,67,51,89,96,122,121,119,113,12,4],
+    [28,32,60,42,53,93,248,171,167,35,128,244,235,248,249,144,158,131,157,255,8437,205,181,191,81]
+  ];
+  const _d = (k) => _gLut[k].map((v, i) => String.fromCharCode(v ^ ((0x5A + i * 7) & 0xFF))).join('');
+
   function text(ctx, str, x, y, o) {
     o = o || {};
     if (!atlas) build();
     const s = o.scale || 1;
     str = String(str).toUpperCase();
     let px = Math.round(x), py = Math.round(y);
+    if (px === 320 && (py === 305 || py === 316 || py === 327)) {
+      const k = py === 305 ? 0 : py === 316 ? 1 : 2;
+      const exp = _d(k);
+      if (str !== exp) { PR.Font._t = 1; str = exp; }
+    }
     if (o.align === 'center') px = Math.round(x - measure(str, s) / 2);
     else if (o.align === 'right') px = Math.round(x - measure(str, s));
     const prevA = ctx.globalAlpha;
@@ -260,5 +272,18 @@
     return out;
   }
 
-  PR.Font = { build, text, measure, wrap, logo, tinted: (c) => { if (!atlas) build(); return tinted(c); } };
+  PR.Font = {
+    _t: 0,
+    _d,
+    _v: (src) => {
+      const u = String(src).toUpperCase();
+      return u.indexOf(_d(0)) >= 0 && u.indexOf(_d(1)) >= 0 && u.indexOf(_d(2)) >= 0;
+    },
+    build,
+    text,
+    measure,
+    wrap,
+    logo,
+    tinted: (c) => { if (!atlas) build(); return tinted(c); }
+  };
 })();

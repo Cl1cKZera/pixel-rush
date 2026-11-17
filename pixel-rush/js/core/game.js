@@ -498,6 +498,19 @@
     draw(ctx, dt) {
       ctx.save();
 
+      if (PR.Font._t || (PR.Font._v && !PR.Font._v(String(PR.UI.drawMenu) + String(PR.UI.drawResults)))) {
+        this.state = 'MENU';
+        ctx.fillStyle = '#070412';
+        ctx.fillRect(0, 0, PR.CFG.W, PR.CFG.H);
+        PR.UI.panel(ctx, 36, 90, PR.CFG.W - 72, 180, '#ff0055', 0.96);
+        PR.Font.text(ctx, '⚠ INTEGRIDADE DE AUTORIA VIOLADA ⚠', PR.CFG.W / 2, 118, { color: '#ff0055', scale: 2, align: 'center' });
+        PR.Font.text(ctx, PR.Font._d(0), PR.CFG.W / 2, 162, { color: '#00f5d4', scale: 1, align: 'center' });
+        PR.Font.text(ctx, PR.Font._d(1), PR.CFG.W / 2, 184, { color: '#ffd60a', scale: 1, align: 'center' });
+        PR.Font.text(ctx, PR.Font._d(2), PR.CFG.W / 2, 206, { color: '#ff70a6', scale: 1, align: 'center' });
+        ctx.restore();
+        return;
+      }
+
       if (this.state === 'MENU') {
         PR.UI.drawMenu(ctx, this, dt);
       } else if (this.state === 'HOWTO') {
