@@ -1,16 +1,9 @@
-/* Motor Pseudo-3D de Pista Larga de 3 Faixas com Profundidade Real e Cenário GTA VI (Vice City / Leonida)
- * - Horizonte com ponto de fuga profundo (halfW = 28px no horizonte -> 384px na base) e compressão 1/Z realista
- *   com mais de 14 faixas tracejadas até o horizonte para transmitir sensação real de longa distância!
- * - Cenário lateral temático GTA VI / Vice City:
- *   • Pôr do sol neon Synthwave/Vice City no horizonte + Skyline iluminado de Vice City
- *   • Esquerda: Calçadão Art Deco de Ocean Drive + Jardins Tropicais + Hotéis Neon "VICE" + Palmeiras + Outdoors
- *   • Direita: Mureta costeira + Águas da Baía de Vice Bay com reflexos neon rosa/ciano/dourado + Palmeiras */
 (function () {
   'use strict';
   const PR = window.PR;
   const U = PR.U;
 
-  const HORIZON_Y = 158; // Horizonte mais alto (202px de pista vertical) para dar muito mais profundidade à rodovia!
+  const HORIZON_Y = 158; 
 
   const Background = {
     HORIZON_Y,
@@ -86,7 +79,6 @@
       this.propSpawnTimer = 0;
       this.propStep = 0;
 
-      // Distribui elementos laterais desde o horizonte profundo (d=0.02) até perto da câmera
       for (let d = 0.02; d < 0.96; d += 0.065) {
         this.spawnPropRow(d);
       }
@@ -96,7 +88,6 @@
       this.propStep++;
       const mod = this.propStep % 6;
 
-      // Beira imediata da pista (Esquerda e Direita): intercala Palmeiras GTA VI, Postes Neon e Placas
       const leftInnerType = (mod === 0 || mod === 3) ? 'lamp' : (mod === 5 ? 'signRight' : 'palm');
       const rightInnerType = (mod === 0 || mod === 3) ? 'lamp' : (mod === 5 ? 'signLeft' : 'palm');
 
@@ -112,7 +103,6 @@
         type: rightInnerType
       });
 
-      // Camada externa do cenário lateral GTA VI (Hotéis Art Deco "VICE" na Ocean Drive e Outdoors na rodovia)
       if (mod === 1 || mod === 4) {
         this.roadProps.push({
           d,
@@ -137,8 +127,6 @@
       }
     },
 
-    // Converte (lanePos: -1..+1, d: 0 no horizonte .. 1 na base da tela) para coordenadas 2D em perspectiva linear exata!
-    // halfW vai de 30px lá no fundo (ponto de fuga profundo) até 382px na base, mantendo 100% de linearidade para os carros!
     project(lanePos, d) {
       const H = PR.CFG.H, W = PR.CFG.W;
       const dc = U.clamp(d, 0, 1.12);
@@ -147,7 +135,7 @@
       const curveShift = this.curve * Math.pow(1 - Math.min(1, dc), 1.85) * 105;
       const cx = W * 0.5 + curveShift;
       const x = cx + lanePos * halfW;
-      const scale = halfW / 302; // 1.00 exato na profundidade do jogador (d = 0.772, y = 314)
+      const scale = halfW / 302; 
       return { x, y, cx, halfW, scale };
     },
 
@@ -165,7 +153,6 @@
       this.skyOffset = (this.skyOffset + this.curve * roadSpeed * 0.12 * dt) % 900;
       if (this.skyOffset < 0) this.skyOffset += 900;
 
-      // Movimento em perspectiva proporcional à escala (halfW / 302)
       for (let i = this.roadProps.length - 1; i >= 0; i--) {
         const p = this.roadProps[i];
         const scale = U.lerp(30, 382, U.clamp(p.d, 0, 1.1)) / 302;
@@ -185,7 +172,6 @@
     drawSkyAndRoad(ctx, time, nitroActive) {
       const W = PR.CFG.W, H = PR.CFG.H;
 
-      // 1. CÉU GTA VI / VICE CITY (Crepúsculo Tropical Roxo -> Magenta Neon -> Laranja Dourado no Horizonte)
       const skyGrad = ctx.createLinearGradient(0, 0, 0, HORIZON_Y);
       skyGrad.addColorStop(0, '#040310');
       skyGrad.addColorStop(0.38, '#140734');
@@ -195,7 +181,6 @@
       ctx.fillStyle = skyGrad;
       ctx.fillRect(0, 0, W, HORIZON_Y);
 
-      // Estrelas no topo do céu
       for (const st of this.stars) {
         ctx.fillStyle = st.col;
         if (st.cross) {
@@ -206,7 +191,6 @@
         }
       }
 
-      // Sol Neon GTA VI / Vice City se pondo no horizonte (acompanha suavemente o ponto de fuga)
       const sunX = Math.round(W * 0.5 + this.curve * 48);
       const sunY = HORIZON_Y - 14;
       const sunR = 46;
@@ -219,13 +203,11 @@
       ctx.arc(sunX, sunY, sunR, Math.PI, 0, false);
       ctx.fill();
 
-      // Listras horizontais cortando o sol (estética clássica Synthwave / Vice City)
       ctx.fillStyle = '#5a1478';
       for (let sy = sunY - 22; sy < sunY; sy += 5) {
         ctx.fillRect(sunX - sunR, sy, sunR * 2, 2);
       }
 
-      // 2. Skyline Distante de Vice City
       const farShift = Math.floor(this.skyOffset * 0.45) % 960;
       for (let rep = -1; rep <= 1; rep++) {
         for (const b of this.farCity) {
@@ -243,11 +225,9 @@
         }
       }
 
-      // Faixa costeira iluminada no horizonte
       ctx.fillStyle = '#24173d';
       ctx.fillRect(0, HORIZON_Y - 18, W, 18);
 
-      // 3. Skyline Principal de Vice City + Ponte Causeway iluminada em neon
       const nearShift = Math.floor(this.skyOffset) % 900;
       for (let rep = -1; rep <= 1; rep++) {
         const bridgeX = Math.round(350 - nearShift + rep * 900);
@@ -273,7 +253,7 @@
 
           ctx.fillStyle = b.col;
           ctx.fillRect(bx, by, b.w, b.h);
-          // Contorno lateral neon Art Deco nos prédios
+
           ctx.fillStyle = b.neon;
           ctx.fillRect(bx, by, 1, b.h);
           ctx.fillRect(bx + b.w - 1, by, 1, b.h);
@@ -294,16 +274,14 @@
         }
       }
 
-      // Brilho atmosférico neon exatamente na linha do horizonte
       ctx.fillStyle = '#ff007f';
       ctx.fillRect(0, HORIZON_Y - 2, W, 1);
       ctx.fillStyle = '#00f5d4';
       ctx.fillRect(0, HORIZON_Y - 1, W, 1);
 
-      // 4. RODOVIA PSEUDO-3D PROFUNDA + CENÁRIO LATERAL GTA VI (OCEAN DRIVE & VICE BAY)
       for (let y = HORIZON_Y; y < H; y += 2) {
         const d = (y - HORIZON_Y) / (H - HORIZON_Y);
-        // Compressão 1/Z mais profunda no horizonte (30 / 352 ≈ 0.085 -> 0.052 para dar longa distância às faixas)
+
         const zMap = 1 / (d + 0.052);
         const band = Math.floor(zMap * 5.0 - this.zOffset * 6.5);
         const isAlt = (band & 1) === 0;
@@ -316,32 +294,28 @@
         const rr = Math.round(cx + halfW);
         const rw = rr - rl;
 
-        // === LATERAL ESQUERDA: Calçadão Art Deco de Ocean Drive + Jardim Tropical de Vice City ===
         if (rl > 0) {
           const promW = Math.round(halfW * 0.34);
           const grassEnd = Math.max(0, rl - promW);
-          // Gramado tropical escuro onde ficam os hotéis e palmeiras externas
+
           ctx.fillStyle = isAlt ? '#0c2d2c' : '#082223';
           ctx.fillRect(0, y, grassEnd, 2);
-          // Calçadão iluminado de Ocean Drive (ladrilhos roxo/magenta neon)
+
           ctx.fillStyle = isAlt ? '#291a44' : '#201437';
           ctx.fillRect(grassEnd, y, rl - grassEnd, 2);
-          // Faixa neon rosa/ciano separando o jardim do calçadão
+
           ctx.fillStyle = isAlt ? '#ff007f' : '#00f5d4';
           ctx.fillRect(grassEnd, y, Math.max(1, Math.round(3 * d)), 2);
         }
 
-        // === LATERAL DIREITA: Praia de Vice Beach + Águas da Baía de Vice Bay com Reflexos Neon ===
         if (rr < W) {
           const guardW = Math.max(3, Math.round(18 * d));
           const sandW = Math.max(4, Math.round(28 * d));
           const waterX = rr + guardW + sandW;
 
-          // Faixa de areia / acostamento costeiro
           ctx.fillStyle = isAlt ? '#382a40' : '#2d2136';
           ctx.fillRect(rr, y, sandW + guardW, 2);
 
-          // Água da Baía de Vice City (azul profundo com reflexos horizontais do pôr do sol neon!)
           if (waterX < W) {
             ctx.fillStyle = isAlt ? '#0a1c3e' : '#071530';
             ctx.fillRect(waterX, y, W - waterX, 2);
@@ -353,25 +327,21 @@
             ctx.fillRect(refX, y, Math.min(refW, W - refX), 1);
           }
 
-          // Mureta / Guard-rail costeiro com refletores neon
           ctx.fillStyle = isAlt ? '#1c1624' : '#120e18';
           ctx.fillRect(rr - guardW, y, guardW, 2);
           ctx.fillStyle = isAlt ? '#00f5d4' : '#ff007f';
           ctx.fillRect(rr - guardW, y, Math.max(1, Math.round(2 * d)), 2);
         }
 
-        // === MEIO-FIO (ZEBRA NEON) ESQUERDO DA RODOVIA ===
         const curbW = Math.max(2, Math.round(10 * d));
         ctx.fillStyle = isAlt ? '#ff007f' : '#00f5d4';
         ctx.fillRect(rl - curbW, y, curbW, 2);
 
-        // === ASFALTO DA RODOVIA DE 3 FAIXAS (com sombreamento de profundidade no horizonte!) ===
         ctx.fillStyle = d < 0.14
           ? (isAlt ? '#2c3148' : '#262b40')
           : (isAlt ? '#434b63' : '#3c445a');
         ctx.fillRect(rl, y, rw, 2);
 
-        // Trilhos longitudinais de rolagem no centro de cada uma das 3 faixas (-0.667, 0.0, +0.667)
         ctx.fillStyle = d < 0.14
           ? (isAlt ? '#323852' : '#2c324a')
           : (isAlt ? '#4b5570' : '#444e67');
@@ -381,7 +351,6 @@
           ctx.fillRect(stripX - (stripW >> 1), y, stripW, 2);
         }
 
-        // APENAS 2 LINHAS TRACEJADAS EM PERSPECTIVA PROFUNDA dividindo as 3 faixas (-0.333 e +0.333)!
         if (isDash) {
           const lineW = Math.max(1, Math.round(7 * d));
           ctx.fillStyle = nitroActive ? '#00f5d4' : (d < 0.12 ? '#9aa6c8' : '#e0e6f8');

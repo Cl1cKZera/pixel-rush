@@ -1,19 +1,37 @@
-# PIXEL RUSH: MATHEMATICS OVERDRIVE 🏎️⚡
+# 🏎️🌴 PIXEL RUSH: MATHEMATICS OVERDRIVE (Vice Edition)
 
-Jogo arcade 2D top-down em **Pixel Art** com estética **Cyber-Neon / Synthwave dos anos 90**, desenvolvido especialmente para **Feiras de Matemática**.
+![HTML5](https://img.shields.io/badge/HTML5-Canvas_2D-E34F26?style=for-the-badge&logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-Arcade_CRT-1572B6?style=for-the-badge&logo=css3&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-Vanilla_ES6+-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+![Web Audio API](https://img.shields.io/badge/Web_Audio_API-Synthwave_Procedural-ff007f?style=for-the-badge)
+![FATEC](https://img.shields.io/badge/FATEC-5º_Semestre_ADS-00f5d4?style=for-the-badge)
 
-O jogo funciona **100% offline**, diretamente no navegador, utilizando **HTML5 Canvas**, **Web Audio API** (música eletrônica e efeitos sonoros gerados proceduralmente) e **LocalStorage** (recordes e configurações).
+> **Jogo de corrida arcade Pseudo-3D em Pixel Art** com estética inspirada em clássicos como *OutRun*, *Top Gear*, *Slipstream* e temática **GTA VI / Vice City Vaporwave**, apresentado no **IX Congresso de Inovação e Tecnologia & XI Workshop de Iniciação Científica e Tecnológica (FATEC)**.
+
+O projeto transforma o raciocínio matemático em parte natural da adrenalina de um jogo de corrida: enquanto pilota um superconversível pelas avenidas neon de Vice City, o jogador atravessa pórticos eletrônicos nas 3 faixas da rodovia para ativar o **Nitro Overdrive**, gerenciar o combustível do tanque e multiplicar sua pontuação.
 
 ---
 
-## 🚀 Como Abrir o Jogo no Navegador
+## 👨‍💻 Autoria e Equipe Acadêmica
 
-Não é necessário instalar nada, nem utilizar servidor ou internet:
+- **Desenvolvido por:** Artur Guimarães
+- **Colaboração:** Wender Corsi, João P. Cavalli, Heitor Rubi e Pedro Carvalho
+- **Instituição:** **FATEC | 5º Semestre – Análise e Desenvolvimento de Sistemas (ADS)**
+- **Evento:** **IX Congresso de Inovação e Tecnologia & XI Workshop de Iniciação Científica e Tecnológica**
 
-1. Abra a pasta do projeto no Windows Explorer.
-2. Dê um **duplo clique** no arquivo **`pixel-rush/index.html`** (ou no atalho **`index.html`** na raiz).
-3. O jogo abrirá imediatamente em qualquer navegador moderno (Google Chrome, Microsoft Edge, Mozilla Firefox).
-4. **Dica para a Feira:** Pressione a tecla **`F`** (ou `F11` do navegador) para colocar o jogo em **Tela Cheia**.
+---
+
+## ✨ Destaques do Projeto
+
+- **Motor Pseudo-3D em HTML5 Canvas (`640x360` Pixel Art):** Projeção em perspectiva com ponto de fuga profundo, curvas dinâmicas, paralaxe de horizonte e cenário lateral temático de *Vice City* (Ocean Drive Art Deco, palmeiras tropicais, outdoors e reflexos neon nas águas de Vice Bay).
+- **Sprites e Fonte em Pixel Art:** Carros, caminhões, palmeiras, hotéis neon, obstáculos, moedas e fonte bitmap `5x7` com acentuação completa em português e símbolos matemáticos.
+- **Áudio Synthwave com Web Audio API:** Trilha sonora *Synthwave* e efeitos sonoros (ronco dinâmico do motor, derrapagem, nitro, colisão e portais) gerados em tempo real no navegador.
+- **Pausa Tática nos Portais (`Pausa para Pensar`):** Ao se aproximar dos 3 portais (`ESQ | CEN | DIR`), o jogo realiza uma pausa tática para que qualquer visitante da feira possa calcular com calma, escolher a faixa certa e disparar com o carro.
+- **Gestão Automática de Sessão para Feiras e Eventos:**
+  - Partidas rápidas de **3 minutos**.
+  - Retorno automático ao menu inicial caso o jogador fique ausente (**AFK**) na pergunta ou na corrida.
+  - Ranking local **Top 10** salvo via `LocalStorage`.
+  - Funcionamento **100% Offline** (sem necessidade de backend ou internet).
 
 ---
 
@@ -21,77 +39,21 @@ Não é necessário instalar nada, nem utilizar servidor ou internet:
 
 | Tecla / Ação | Função |
 | :--- | :--- |
-| **`A` / `D`** ou **`←` / `→`** | Movimentar o carro entre as faixas (e escolher o portal na Pausa Matemática) |
-| **`W` / `↑` / `ESPAÇO` / `ENTER`** | Acelerar / Confirmar o portal escolhido durante a **Pausa para Pensar** |
-| **`1` / `2` / `3`** ou **Clique do Mouse** | Escolher diretamente o portal da **Esquerda (`1`)**, **Centro (`2`)** ou **Direita (`3`)** |
-| **`S`** ou **`↓`** | Frear / desacelerar no tráfego |
-| **`ESPAÇO`** | Ativar **Super Nitro Overdrive** durante a corrida (quando Nitro ≥ 20%) |
-| **`ESC`** ou **`P`** | Pausar / Retomar a partida e ajustar volumes de áudio |
-| **`M`** | Silenciar / Ativar o som instantaneamente |
-| **`ENTER` / `ESPAÇO` / Mouse** | Selecionar opções nos menus |
-| **`F`** | Alternar modo de Tela Cheia |
+| **`A` / `D`** ou **`←` / `→`** | Mudar entre as 3 faixas da rodovia / Selecionar portal |
+| **`W` / `↑` / `ESPAÇO` / `ENTER`** | Acelerar / Confirmar portal durante a *Pausa para Pensar* |
+| **`1` / `2` / `3`** ou **Clique do Mouse** | Escolher diretamente o portal **Esquerda (`1`)**, **Centro (`2`)** ou **Direita (`3`)** |
+| **`S`** ou **`↓`** | Frear no tráfego |
+| **`ESPAÇO`** | Ativar **Nitro Overdrive** (quando a barra de Nitro ≥ 20%) |
+| **`ESC`** ou **`P`** | Pausar a partida / Menu de áudio |
+| **`M`** | Ativar / Silenciar o som |
+| **`F`** | Alternar modo Tela Cheia |
 
 ---
 
-## 🧮 Mecânicas Matemáticas Integradas ao Gameplay
+## 🚀 Como Executar Localmente
 
-A matemática faz parte natural da pilotagem — sem interromper a adrenalina da corrida:
-
-1. **Mecânica A — Portais Matemáticos (`ESQ | CEN | DIR`)**:
-   - Operações de adição, subtração, multiplicação, divisão, porcentagem, potências (`2³`, `4²`, `12²`), raízes quadradas (`√64`, `√144`) e equações do 1º grau (`2X + 4 = 18`).
-   - Atravesse o portal com o resultado correto para ganhar bônus de pontos, moedas, nitro e aumentar o **Multiplicador de Combo** (até `X6`).
-2. **Mecânica B — Nitro Matemático**:
-   - Portais especiais de sobrecarga que carregam até **+65% de Nitro** e acionam um jato imediato de velocidade ao acertar o cálculo.
-3. **Mecânica C — Gestão de Combustível com Porcentagem (`%`)**:
-   - Desafios contextualizados que leem o nível real do tanque do jogador (ex.: *"Seu tanque está com 40%. O galão recupera +25%: 40% + 25% = ?"*) e premiam com reabastecimento extra.
-4. **Mecânica D — Física da Corrida (Distância, Velocidade e Tempo)**:
-   - Cálculos reais envolvendo velocidade média (`km/h`), distância percorrida (`km`) e tempo (`h` e `min`).
-5. **Mecânica E — Desafios Surpresa**:
-   - Sequências numéricas (progressões aritméticas, geométricas, quadrados perfeitos, Fibonacci), conversões de unidades (`km` para `m`) e raciocínio rápido.
-
----
-
-## 🎪 Sistema Automático de Sessão para a Feira de Matemática
-
-- **Partidas de 3 minutos** (`180s`) com contagem regressiva inicial de 3 segundos e dificuldade progressiva (`Fácil` → `Médio` → `Difícil`).
-- **Retorno Automático pós-corrida:** A tela de resultados permanece visível por no máximo **20 segundos** e retorna sozinha ao Menu Principal para o próximo visitante.
-- **Detector de Inatividade:** Se o computador ficar **60 segundos** sem interação, exibe o aviso *"Sessão encerrada por inatividade. Preparando o próximo jogador..."* com contagem de **10 segundos**. Qualquer tecla ou movimento do mouse cancela o encerramento; caso contrário, a sessão é reiniciada limpando todos os dados da partida (preservando os recordes e configurações).
-- **Offline-First:** Detecta quedas de rede discretamente e continua funcionando sem qualquer dependência externa.
-
----
-
-## 📁 Estrutura de Arquivos Principais
-
-```text
-pixel-rush/
-  index.html               # Página principal do jogo
-  README.md                # Documentação e instruções
-  DEVELOPMENT_STATUS.md    # Registro de etapas e verificação
-  css/
-    style.css              # Estilo visual do gabinete arcade, CRT scanlines e responsividade
-  js/
-    main.js                # Inicialização, redimensionamento responsivo e loop 60fps
-    core/
-      config.js            # Parâmetros globais da pista, física e timers de sessão
-      utils.js             # Funções matemáticas, PRNG, interpolação e formatação
-      storage.js           # Persistência em LocalStorage (Top 10 recordes e configurações)
-      input.js             # Controles de teclado, mouse e toque
-      session.js           # Gestão automática de sessão da feira (inatividade e offline)
-      game.js              # Máquina de estados, colisões, pontuação e ranks
-    gfx/
-      font.js              # Fonte bitmap 5x7 em pixel art com acentos e símbolos matemáticos
-      sprites.js           # Gerador procedural de sprites em pixel art (carros, caminhões, itens, cenário)
-      particles.js         # Partículas, chamas de nitro, faíscas, derrapagem e câmera shake
-    audio/
-      audio.js             # Sintetizador Web Audio API (motor dinâmico, SFX e música synthwave)
-    math/
-      math-engine.js       # Gerador procedural das 5 mecânicas matemáticas
-    world/
-      background.js        # Cidade noturna neon em paralaxe e rodovia de 5 faixas
-    entities/
-      player.js            # Física e renderização do carro principal
-      traffic.js           # Geração procedural justa de tráfego, obstáculos, itens e portais
-    ui/
-      ui.js                # Menu principal, Como Jogar, Recordes, HUD, Pausa e Resultados
-```
-
+1. Clone este repositório:
+   ```bash
+   git clone https://github.com/Cl1cKZera/drive-game.git
+   ```
+2. Abra o arquivo **`index.html`** diretamente em qualquer navegador moderno.

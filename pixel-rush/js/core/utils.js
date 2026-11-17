@@ -1,4 +1,3 @@
-/* Utilidades matemáticas, formatação e aleatoriedade */
 (function () {
   'use strict';
   const PR = window.PR;
@@ -32,7 +31,6 @@
   U.easeInOut = (t) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
   U.round = (n, d) => { const f = Math.pow(10, d || 0); return Math.round(n * f) / f; };
 
-  // Formatação brasileira
   U.fmtInt = (n) => {
     n = Math.round(n);
     const s = String(Math.abs(n)).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
@@ -43,7 +41,7 @@
     const parts = Math.abs(n).toFixed(d).split('.');
     return (neg ? '-' : '') + U.fmtInt(+parts[0]) + (d > 0 ? ',' + parts[1] : '');
   };
-  // Números de respostas matemáticas: sem separador de milhar, vírgula decimal
+
   U.fmtNum = (n) => {
     const r = Math.round(n * 10000) / 10000;
     return String(r).replace('.', ',');
@@ -80,7 +78,7 @@
     c.width = Math.max(1, w | 0); c.height = Math.max(1, h | 0);
     return c;
   };
-  // círculo pixelado nítido (sem antialias)
+
   U.pcirc = (ctx, cx, cy, r, col) => {
     ctx.fillStyle = col;
     for (let y = -r; y <= r; y++) {
@@ -91,4 +89,3 @@
 
   PR.U = U;
 })();
-

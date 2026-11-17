@@ -1,8 +1,3 @@
-/* Gerador Procedural de Sprites em Pixel Art — Estilo Slipstream / OutRun 16-bit + Temática GTA VI (Vice City)
- * - Ferrari F40 Conversível detalhada (sombreado em 5 tons de vermelho, motorista e passageira, grade colmeia e lanternas)
- * - Carros adversários (Esportivos, Coupes, Sedans, Polícia, Táxi e Caminhões) na mesma proporção 16-bit
- * - Cenário lateral GTA VI: Palmeiras Tropicais de Vice City detalhadas, Outdoors Neon ("VICE CITY", "LEONIDA 5º ADS"),
- *   Letreiros Art Deco ("HOTEL VICE"), Postes Iluminados e Placas de Curva */
 (function () {
   'use strict';
   const PR = window.PR;
@@ -13,13 +8,11 @@
     ready: false
   };
 
-  // Superconversível Esportivo (116x52) fiel ao carro vermelho da referência
   function makeHeroConvertible(wheelFrame, steer, nitroMode) {
     const c = U.canvas(116, 52);
     const x = c.getContext('2d');
     const sx = steer * 2;
 
-    // 1. Sombra projetada no asfalto
     x.fillStyle = 'rgba(0, 0, 0, 0.65)';
     x.fillRect(8, 43, 100, 7);
     if (nitroMode) {
@@ -27,7 +20,6 @@
       x.fillRect(10, 44, 96, 6);
     }
 
-    // 2. Pneus traseiros largos com textura de borracha
     const tr = wheelFrame ? 1 : 0;
     x.fillStyle = '#090b10';
     x.fillRect(11, 35, 22, 13);
@@ -44,7 +36,6 @@
     x.fillStyle = '#6c757d';
     x.fillRect(106, 29, 2, 10);
 
-    // 3. Para-brisa inclinado + Motorista e Passageira
     x.fillStyle = '#a4161a';
     x.fillRect(26 + sx, 8, 64, 2);
     x.fillStyle = '#660708';
@@ -57,7 +48,6 @@
     x.fillStyle = '#161a1d';
     x.fillRect(54 + sx, 10, 8, 2);
 
-    // Motorista
     x.fillStyle = '#3d2314';
     x.fillRect(38 + sx, 4, 11, 8);
     x.fillStyle = '#5c3822';
@@ -69,7 +59,6 @@
     x.fillStyle = '#adc178';
     x.fillRect(36 + sx, 14, 16, 4);
 
-    // Passageira
     const hw = wheelFrame ? 1 : 0;
     x.fillStyle = '#b68938';
     x.fillRect(67 + sx, 5, 14 + hw, 10);
@@ -82,7 +71,6 @@
     x.fillStyle = '#ff007f';
     x.fillRect(66 + sx, 15, 14, 3);
 
-    // 4. Tampa do motor traseiro
     x.fillStyle = '#343a40';
     x.fillRect(34 + sx, 16, 48, 7);
     x.fillStyle = '#6c757d';
@@ -94,7 +82,6 @@
       x.fillRect(gx, 17, 2, 4);
     }
 
-    // 5. Carroceria Esportiva Esculpida
     x.fillStyle = '#660708';
     x.fillRect(8, 21, 100, 22);
     x.fillStyle = '#a4161a';
@@ -116,7 +103,6 @@
     x.fillStyle = '#1b0912';
     x.fillRect(20, 22, 76, 3);
 
-    // 6. Grade Traseira Colmeia Preta + Lanternas Redondas Duplas + Placa Central
     x.fillStyle = '#0b0c10';
     x.fillRect(16, 27, 84, 9);
     x.fillStyle = '#2b303c';
@@ -141,7 +127,6 @@
     x.fillStyle = '#adb5bd';
     x.fillRect(50, 30, 16, 4);
 
-    // 7. Para-choque Inferior + Escapamento Central
     x.fillStyle = '#800f2f';
     x.fillRect(10, 36, 96, 4);
     x.fillStyle = '#4a051c';
@@ -168,7 +153,6 @@
     return c;
   }
 
-  // Carros adversários 16-bit (92x44)
   function makeTrafficCar3D(theme, isPolice, wheelFrame) {
     const c = U.canvas(92, 44);
     const x = c.getContext('2d');
@@ -273,7 +257,6 @@
     return c;
   }
 
-  // Poste de luz clássico da avenida noturna
   function makeStreetlight3D() {
     const c = U.canvas(44, 114);
     const x = c.getContext('2d');
@@ -298,12 +281,10 @@
     return c;
   }
 
-  // Palmeira Tropical exuberante estilo GTA VI / Vice City (92x132, com copa cheia e iluminação neon!)
   function makePalm3D() {
     const c = U.canvas(92, 132);
     const x = c.getContext('2d');
 
-    // Tronco alto curvado com anéis e reflexo magenta/laranja do pôr-do-sol de Vice City
     for (let y = 36; y < 128; y += 3) {
       const t = (y - 36) / 92;
       const curve = Math.round(Math.sin(t * Math.PI * 0.9) * 8);
@@ -317,17 +298,15 @@
       x.fillRect(tx + 2, y + 1, Math.max(1, w - 3), 1);
     }
 
-    // Cocos/base da copa
     U.pcirc(x, 45, 36, 5, '#1d1128');
 
-    // Folhas de palmeira arqueadas (camada escura + camada tropical turquesa/verde-neon + brilho)
     const fronds = [
-      // Esquerda
+
       [-38, 4, 10, 4], [-32, -2, 12, 4], [-22, -6, 18, 4],
       [-34, -12, 12, 4], [-24, -18, 20, 4],
       [-18, -26, 16, 4], [-8, -30, 16, 4],
       [-28, 12, 16, 3], [-16, 6, 14, 3],
-      // Direita
+
       [6, -6, 18, 4], [20, -2, 12, 4], [28, 4, 10, 4],
       [6, -18, 20, 4], [22, -12, 12, 4],
       [4, -26, 16, 4],
@@ -340,7 +319,7 @@
       x.fillRect(45 + dx, 36 + dy, w, h);
       x.fillStyle = '#72efdd';
       x.fillRect(46 + dx, 36 + dy, Math.max(2, w - 2), 1);
-      // Franjas verticais das folhas de coqueiro
+
       for (let fx = 46 + dx; fx < 45 + dx + w; fx += 3) {
         x.fillStyle = '#0077b6';
         x.fillRect(fx, 36 + dy + h, 1, 3);
@@ -350,12 +329,10 @@
     return c;
   }
 
-  // Outdoor / Billboard luminoso de rodovia estilo GTA VI ("VICE CITY", "LEONIDA 5º ADS")
   function makeViceBillboard(variant) {
     const c = U.canvas(88, 76);
     const x = c.getContext('2d');
 
-    // Duas colunas de aço de sustentação
     x.fillStyle = '#22273b';
     x.fillRect(20, 42, 6, 34);
     x.fillRect(62, 42, 6, 34);
@@ -363,7 +340,6 @@
     x.fillRect(21, 42, 2, 34);
     x.fillRect(63, 42, 2, 34);
 
-    // Passarela metálica sob o outdoor + holofotes
     x.fillStyle = '#141829';
     x.fillRect(6, 40, 76, 4);
     x.fillStyle = '#ffd166';
@@ -371,7 +347,6 @@
     x.fillRect(41, 38, 6, 2);
     x.fillRect(64, 38, 6, 2);
 
-    // Painel principal com gradiente Vice City Rosa/Roxo/Ciano
     const borderCol = variant === 0 ? '#ff007f' : '#00f5d4';
     x.fillStyle = '#0c0820';
     x.fillRect(4, 6, 80, 34);
@@ -404,18 +379,15 @@
     return c;
   }
 
-  // Fachada / Letreiro Art Deco de Hotel Neon de Ocean Drive (GTA VI Vice Beach)
   function makeArtDecoHotel() {
     const c = U.canvas(76, 128);
     const x = c.getContext('2d');
 
-    // Prédio Art Deco pastel/noturno com frisos neon verticais e horizontais
     x.fillStyle = '#1b1435';
     x.fillRect(6, 14, 64, 114);
     x.fillStyle = '#261c47';
     x.fillRect(12, 8, 52, 120);
 
-    // Frisos neon Art Deco (rosa choque e azul turquesa)
     x.fillStyle = '#ff007f';
     x.fillRect(6, 14, 2, 114);
     x.fillRect(66, 14, 2, 114);
@@ -426,10 +398,8 @@
     x.fillRect(18, 12, 2, 116);
     x.fillRect(56, 12, 2, 116);
 
-    // Letreiro no topo "VICE"
     PR.Font.text(x, 'VICE', 38, 13, { color: '#ffd60a', scale: 1, align: 'center', shadow: '#ff007f' });
 
-    // Janelas iluminadas com luz rosa/ciano de festa
     for (let wy = 32; wy < 116; wy += 14) {
       x.fillStyle = (wy % 28 === 0) ? '#ff70a6' : '#48cae4';
       x.fillRect(24, wy, 10, 8);

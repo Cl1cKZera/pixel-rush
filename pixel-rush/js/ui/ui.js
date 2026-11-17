@@ -1,25 +1,15 @@
-/* Interface Gráfica Arcade (UI & HUD) — Estilo OutRun / Top Gear / GTA VI (Vice City Vaporwave)
- * Inclui:
- * - HUD clássico inspirado na referência:
- *   • Topo: [PTS] + Pontuação / Multiplicador | [TIME] + Tempo | [MATH] + Acertos & Vidas
- *   • Barra horizontal de progresso da corrida: S ━━━━━━▲ 1,20 KM━━━━━━ G
- *   • Canto inferior esquerdo: 3 Mostradores Analógicos Redondos com ponteiros móveis (KPH, RPM com marcha e COMB %)
- *   • Abaixo do conversível: Barra [NITRO OVERDRIVE] (estilo OVERHEAT arcade)
- *   • Canto inferior direito: STAGE • VICE MATH + Créditos 5º ADS
- * - Painel de Desafio Matemático e Pausa para Pensar no céu acima do horizonte (sem tampar a pista 3D!) */
 (function () {
   'use strict';
   const PR = window.PR;
   const U = PR.U;
 
-  // Créditos rotativos dos integrantes do grupo 5º ADS
   const CREDITS_ROTATION = [
-    { text: 'DEV: ARTUR GUIMARÃES • 5º ADS', col: '#00f5d4' },
-    { text: '5º ADS • WENDER CORSI',          col: '#ffd60a' },
-    { text: '5º ADS • JOÃO PEDRO CAVALLI',    col: '#ff70a6' },
-    { text: '5º ADS • HEITOR RUBI',           col: '#90e0ef' },
-    { text: '5º ADS • PEDRO CARVALHO',        col: '#70e000' },
-    { text: '5º ADS • ARTUR GUIMARÃES',       col: '#00f5d4' }
+    { text: 'DESENVOLVIDO POR ARTUR GUIMARÃES', col: '#00f5d4' },
+    { text: 'FATEC | 5º SEMESTRE – ADS',        col: '#ffd60a' },
+    { text: 'COLAB.: WENDER CORSI',             col: '#ff70a6' },
+    { text: 'COLAB.: JOÃO P. CAVALLI',          col: '#90e0ef' },
+    { text: 'COLAB.: HEITOR RUBI',              col: '#70e000' },
+    { text: 'COLAB.: PEDRO CARVALHO',           col: '#ffd60a' }
   ];
 
   const UI = {
@@ -48,7 +38,6 @@
       ctx.fillRect(x + w - 3, y + h - 3, 3, 3);
     },
 
-    // Placa estilo caixa arcade anos 90 (como [POS], [TIME], [CHRONO] da imagem!)
     arcadeBadge(ctx, text, x, y, w, h, bgCol, textCol) {
       ctx.fillStyle = '#05050c';
       ctx.fillRect(x + 2, y + 2, w, h);
@@ -119,11 +108,9 @@
       ctx.strokeRect(x + 0.5, y + 0.5, w - 1, h - 1);
     },
 
-    // Desenha um mostrador circular analógico (Velocímetro KPH, Conta-giros RPM e Combustível %) igual ao print!
     drawAnalogGauge(ctx, cx, cy, r, ratio, label, subLabel, redlineStart, numLabels) {
       ratio = U.clamp(ratio, 0, 1);
 
-      // Aro metálico externo e fundo escuro do relógio
       ctx.beginPath();
       ctx.arc(cx, cy, r + 2, 0, Math.PI * 2);
       ctx.fillStyle = '#5c677d';
@@ -134,17 +121,15 @@
       ctx.fillStyle = 'rgba(10, 14, 24, 0.92)';
       ctx.fill();
 
-      // Ângulos do mostrador: 135° (0.75π) até 405° (2.25π) -> varredura de 270° (1.5π)
       const a0 = Math.PI * 0.75;
       const a1 = Math.PI * 2.25;
 
-      // Faixa vermelha de giro alto / reserva (redline)
       if (redlineStart !== undefined) {
         ctx.beginPath();
         if (redlineStart >= 0) {
           ctx.arc(cx, cy, r - 3, a0 + (a1 - a0) * redlineStart, a1);
         } else {
-          // Reserva de combustível no início do arco
+
           ctx.arc(cx, cy, r - 3, a0, a0 + (a1 - a0) * Math.abs(redlineStart));
         }
         ctx.strokeStyle = '#ef233c';
@@ -152,7 +137,6 @@
         ctx.stroke();
       }
 
-      // Marcações (ticks) ao redor do relógio
       const ticks = 18;
       for (let i = 0; i <= ticks; i++) {
         const t = i / ticks;
@@ -168,7 +152,6 @@
         ctx.stroke();
       }
 
-      // Números internos opcionais ou rótulo central
       if (label) {
         PR.Font.text(ctx, label, cx, cy - 8, {
           color: '#90e0ef',
@@ -185,7 +168,6 @@
         });
       }
 
-      // Ponteiro branco/neon do mostrador
       const needleAng = a0 + (a1 - a0) * ratio;
       ctx.strokeStyle = '#ffffff';
       ctx.lineWidth = 2;
@@ -194,21 +176,15 @@
       ctx.lineTo(cx + Math.cos(needleAng) * (r - 5), cy + Math.sin(needleAng) * (r - 5));
       ctx.stroke();
 
-      // Pino central
       U.pcirc(ctx, cx, cy, 2, '#ff007f');
     },
 
-    // =========================================================================
-    // 1. MENU PRINCIPAL (ESTILO OUTRUN / GTA VI VICE CITY VAPORWAVE)
-    // =========================================================================
     drawMenu(ctx, game, dt) {
       this.animTime += dt;
       const W = PR.CFG.W, H = PR.CFG.H;
 
-      // Cenário 3D animado de Vice City à noite com rodovia em perspectiva
       PR.Background.drawMenuBackdrop(ctx, this.animTime);
 
-      // Barra superior: Recorde Pessoal + Botão de Som
       this.panel(ctx, 12, 8, 232, 22, '#ffd60a', 0.88);
       const best = PR.Storage.best();
       PR.Font.text(ctx, '★ RECORDE: ' + U.fmtInt(best) + ' PTS', 20, 16, {
@@ -226,7 +202,6 @@
         PR.Audio.sfx('click');
       }
 
-      // Logotipo principal PIXEL RUSH (gradiente Vice City Rosa/Ciano/Dourado)
       const logoImg = PR.Font.logo('PIXEL RUSH', 4, ['#00f5d4', '#ffffff', '#ff007f', '#ff9e00'], {
         extrude: 4,
         extrudeColor: '#240046',
@@ -236,7 +211,6 @@
       const logoBob = Math.round(Math.sin(this.animTime * 2.6) * 2);
       ctx.drawImage(logoImg, Math.round((W - logoImg.width) / 2), 26 + logoBob);
 
-      // Subtítulo MATHEMATICS OVERDRIVE • VICE EDITION
       this.panel(ctx, W / 2 - 156, 74, 312, 18, '#ff007f', 0.92);
       PR.Font.text(ctx, '🌴 MATHEMATICS OVERDRIVE • VICE EDITION 🌴', W / 2, 80, {
         color: '#00f5d4',
@@ -245,14 +219,12 @@
         shadow: '#000000'
       });
 
-      // Superconversível Esportivo Vermelho na rodovia 3D (com motorista e passageira!)
       const carFrame = Math.floor(this.animTime * 14) % 2;
       const carOscX = Math.round(Math.sin(this.animTime * 1.6) * 22);
       const steer = Math.cos(this.animTime * 1.6) > 0.35 ? 1 : Math.cos(this.animTime * 1.6) < -0.35 ? -1 : 0;
       const heroImg = PR.Sprites.getPlayer(carFrame, steer, true);
-      ctx.drawImage(heroImg, Math.round(W / 2 - heroImg.width / 2 + carOscX), 266);
+      ctx.drawImage(heroImg, Math.round(W / 2 - heroImg.width / 2 + carOscX), 242);
 
-      // Navegação por teclado no menu
       if (PR.Input.hit('up')) {
         this.menuSelected = (this.menuSelected + 2) % 3;
         PR.Audio.sfx('hover');
@@ -261,7 +233,6 @@
         PR.Audio.sfx('hover');
       }
 
-      // 3 Botões Principais no centro da tela
       const bw = 216, bx = Math.round((W - bw) / 2);
       const bPlay = this.button(ctx, 'btn_play', 'JOGAR AGORA', bx, 102, bw, 28, {
         selected: this.menuSelected === 0,
@@ -295,31 +266,35 @@
         game.state = 'RECORDS';
       }
 
-      // Créditos da equipe 5º ADS e controles no rodapé
-      PR.Font.text(
-        ctx,
-        'DEV: ARTUR GUIMARÃES • 5º ADS  |  WENDER CORSI • JOÃO P. CAVALLI • HEITOR RUBI • PEDRO CARVALHO',
-        W / 2,
-        H - 34,
-        {
-          color: '#ffd60a',
-          scale: 1,
-          align: 'center',
-          outline: '#050510'
-        }
-      );
+      this.panel(ctx, 12, H - 60, W - 24, 54, '#ff007f', 0.90);
+      PR.Font.text(ctx, 'DESENVOLVIDO POR ARTUR GUIMARÃES', W / 2, H - 55, {
+        color: '#00f5d4',
+        scale: 1,
+        align: 'center',
+        outline: '#050510'
+      });
+      PR.Font.text(ctx, 'COLABORAÇÃO: WENDER CORSI, JOÃO P. CAVALLI, HEITOR RUBI E PEDRO CARVALHO', W / 2, H - 44, {
+        color: '#ffd60a',
+        scale: 1,
+        align: 'center',
+        outline: '#050510'
+      });
+      PR.Font.text(ctx, 'FATEC | 5º SEMESTRE – ADS', W / 2, H - 33, {
+        color: '#ff70a6',
+        scale: 1,
+        align: 'center',
+        outline: '#050510'
+      });
 
-      this.panel(ctx, 12, H - 22, W - 24, 16, '#ff007f', 0.88);
-      PR.Font.text(ctx, '[A/D] OU [←/→] DIREÇÃO • [W/S] ACELERAR/FREAR • [ESPAÇO] NITRO • [1/2/3] PORTAIS', W / 2, H - 17, {
+      ctx.fillStyle = 'rgba(255, 0, 127, 0.35)';
+      ctx.fillRect(20, H - 22, W - 40, 1);
+      PR.Font.text(ctx, '[A/D] OU [←/→] DIREÇÃO • [W/S] ACELERAR/FREAR • [ESPAÇO] NITRO • [1/2/3] PORTAIS', W / 2, H - 18, {
         color: '#e0fbfc',
         scale: 1,
         align: 'center'
       });
     },
 
-    // =========================================================================
-    // 2. MODAL: COMO JOGAR
-    // =========================================================================
     drawHowTo(ctx, game, dt) {
       this.animTime += dt;
       PR.Background.drawMenuBackdrop(ctx, this.animTime);
@@ -390,9 +365,6 @@
       }
     },
 
-    // =========================================================================
-    // 3. MODAL: RECORDES
-    // =========================================================================
     drawRecords(ctx, game, dt) {
       this.animTime += dt;
       PR.Background.drawMenuBackdrop(ctx, this.animTime);
@@ -454,16 +426,11 @@
       }
     },
 
-    // =========================================================================
-    // 4. HUD ARCADE CLÁSSICO + MOSTRADORES ANALÓGICOS (IGUAL À IMAGEM DE REFERÊNCIA!)
-    // =========================================================================
     drawHUD(ctx, game) {
       this.animTime += 1 / 60;
       const p = game.player;
       const W = PR.CFG.W, H = PR.CFG.H;
 
-      // 1. BARRA SUPERIOR ESTILO TOP GEAR / OUTRUN:
-      // Esquerda: [PTS] + Pontuação + Multiplicador
       this.arcadeBadge(ctx, 'PTS', 12, 6, 38, 16, '#1b4332', '#70e000');
       PR.Font.text(ctx, U.fmtInt(game.score), 56, 7, {
         color: '#70e000',
@@ -472,7 +439,6 @@
       });
       this.arcadeBadge(ctx, 'X' + game.multiplier, 152, 6, 30, 16, '#3c096c', '#ff007f');
 
-      // Centro: [TIME] + Segundos restantes em amarelo grande (exatamente como no print!)
       this.arcadeBadge(ctx, 'TIME', 226, 6, 44, 16, '#3d3112', '#ffd60a');
       const secLeft = Math.max(0, Math.ceil(game.timeLeft));
       PR.Font.text(ctx, String(secLeft), 276, 7, {
@@ -481,7 +447,6 @@
         outline: '#050510'
       });
 
-      // Direita: [MATH] + Acertos + Corações de Vida
       this.arcadeBadge(ctx, 'MATH', 376, 6, 44, 16, '#102a43', '#4cc9f0');
       PR.Font.text(ctx, game.mathCorrect + '/' + game.mathTotal, 426, 7, {
         color: '#4cc9f0',
@@ -496,13 +461,11 @@
         });
       }
 
-      // Botão compacto de Pausa no canto superior direito
       if (this.button(ctx, 'hud_pause', 'PAUSA', W - 56, 6, 46, 16, { color: '#4cc9f0' }).clicked) {
         PR.Audio.sfx('click');
         game.togglePause();
       }
 
-      // 2. BARRA HORIZONTAL DE PROGRESSO DO ESTÁGIO (S ━━━━━━▲ 1,25 KM━━━━━━ G) IGUAL AO PRINT!
       const barX0 = 24, barX1 = 468, barY = 30;
       const barW = barX1 - barX0;
       PR.Font.text(ctx, 'S', barX0 - 11, barY - 3, { color: '#ffd60a', scale: 1, outline: '#000' });
@@ -514,7 +477,6 @@
       const progW = Math.round(barW * U.clamp(game.progress, 0, 1));
       ctx.fillRect(barX0, barY, progW, 2);
 
-      // Marcador triangular + Distância em KM abaixo da barra
       const markerX = barX0 + progW;
       PR.Font.text(ctx, '▲ ' + U.fmtDec(game.distanceKm, 2) + 'KM', markerX, barY + 5, {
         color: '#fff3b0',
@@ -523,11 +485,8 @@
         outline: '#000'
       });
 
-      // 3. TRÊS MOSTRADORES REDONDOS ANALÓGICOS NO CANTO INFERIOR ESQUERDO (KPH, RPM e COMB %)!
-      // Mostrador 1: Velocímetro (0 a 320 KPH)
       this.drawAnalogGauge(ctx, 48, 314, 34, p.kmh / 320, 'KPH', String(p.kmh), 0.78);
 
-      // Indicador de Marcha entre os dois relógios (como o "5" branco no print!)
       const gear = p.kmh < 40 ? 1 : p.kmh < 85 ? 2 : p.kmh < 130 ? 3 : p.kmh < 175 ? 4 : p.kmh < 220 ? 5 : 6;
       PR.Font.text(ctx, String(gear), 88, 282, {
         color: '#ffffff',
@@ -536,14 +495,11 @@
         outline: '#000'
       });
 
-      // Mostrador 2: Conta-giros (x1000 RPM)
       this.drawAnalogGauge(ctx, 126, 314, 34, p.rpm / 9000, 'RPM', U.fmtDec(p.rpm / 1000, 1), 0.78);
 
-      // Mostrador 3: Medidor de Combustível (%)
       const fuelPct = Math.round(p.fuel);
       this.drawAnalogGauge(ctx, 182, 328, 20, p.fuel / 100, 'COMB', fuelPct + '%', -0.25);
 
-      // Alerta piscante se o combustível estiver acabando
       if (fuelPct <= 22 && Math.floor(this.animTime * 6) % 2 === 0) {
         PR.Font.text(ctx, '⚠ TANQUE BAIXO!', 182, 296, {
           color: '#ff0055',
@@ -553,7 +509,6 @@
         });
       }
 
-      // 4. BARRA CENTRAL INFERIOR ABAIXO DO CONVERSÍVEL (Estilo [OVERHEAT] da imagem -> [NITRO OVERDRIVE])
       const nbW = 128, nbH = 11, nbX = Math.round(W / 2 - nbW / 2), nbY = 338;
       ctx.fillStyle = 'rgba(8, 10, 20, 0.9)';
       ctx.fillRect(nbX, nbY, nbW, nbH);
@@ -576,7 +531,6 @@
         }
       );
 
-      // 5. CANTO INFERIOR DIREITO: MOEDAS + STAGE (como o "STAGE 1" do print!) + CRÉDITOS ROTATIVOS DO GRUPO 5º ADS
       PR.Font.text(ctx, 'MOEDAS: ' + game.coins, W - 14, 314, {
         color: '#ffd60a',
         scale: 1,
@@ -598,8 +552,6 @@
         outline: '#050510'
       });
 
-      // 6. PAINEL DE DESAFIO MATEMÁTICO E PAUSA PARA PENSAR (NO CÉU ACIMA DO HORIZONTE y=38..138)
-      // Posicionado acima de HORIZON_Y (158), para que a pista 3D, os 3 portais e o conversível fiquem 100% livres!
       const activePortal = PR.Traffic.activePortal();
       const curChallenge = PR.Traffic.currentChallenge();
 
@@ -628,7 +580,6 @@
           });
         }
 
-        // Pergunta Matemática em tamanho grande no centro do painel
         const w2 = PR.Font.measure(ch.prompt, 2);
         const promptScale = w2 <= pw - 16 ? 2 : 1;
         const promptY = promptScale === 2 ? py + 26 : py + 29;
@@ -639,7 +590,6 @@
           outline: '#050712'
         });
 
-        // 3 Botões clicáveis e selecionáveis correspondentes aos 3 Portais 3D da pista
         const playerZone = PR.Traffic.playerZoneIndex(p.x);
         const boxW = 104, boxH = 18, boxY = py + 43;
         const startX = px + 9;
@@ -746,9 +696,6 @@
       });
     },
 
-    // =========================================================================
-    // 5. MENU DE PAUSA
-    // =========================================================================
     drawPause(ctx, game) {
       const W = PR.CFG.W, H = PR.CFG.H;
       ctx.fillStyle = 'rgba(4, 6, 16, 0.78)';
@@ -819,9 +766,6 @@
       }
     },
 
-    // =========================================================================
-    // 6. TELA DE RESULTADOS
-    // =========================================================================
     drawResults(ctx, game, dt) {
       this.animTime += dt;
       PR.Background.drawMenuBackdrop(ctx, this.animTime);
@@ -924,29 +868,25 @@
         game.resetSessionToMenu();
       }
 
-      PR.Font.text(ctx, 'PRESSIONE [ENTER / ESPAÇO] PARA JOGAR NOVAMENTE OU [ESC] PARA MENU', W / 2, 302, {
+      PR.Font.text(ctx, 'PRESSIONE [ENTER / ESPAÇO] PARA JOGAR NOVAMENTE OU [ESC] PARA MENU', W / 2, 296, {
         color: '#90e0ef',
         scale: 1,
         align: 'center'
       });
-      PR.Font.text(
-        ctx,
-        'DESENVOLVIDO POR ARTUR GUIMARÃES • 5º ADS (WENDER CORSI • JOÃO P. CAVALLI • HEITOR RUBI • PEDRO CARVALHO)',
-        W / 2,
-        320,
-        {
-          color: '#00f5d4',
-          scale: 1,
-          align: 'center',
-          alpha: 0.78,
-          shadow: '#000'
-        }
-      );
+      PR.Font.text(ctx, 'DESENVOLVIDO POR ARTUR GUIMARÃES  •  FATEC | 5º SEMESTRE – ADS', W / 2, 312, {
+        color: '#00f5d4',
+        scale: 1,
+        align: 'center',
+        shadow: '#000'
+      });
+      PR.Font.text(ctx, 'COLABORAÇÃO: WENDER CORSI, JOÃO P. CAVALLI, HEITOR RUBI E PEDRO CARVALHO', W / 2, 324, {
+        color: '#ffd60a',
+        scale: 1,
+        align: 'center',
+        shadow: '#000'
+      });
     },
 
-    // =========================================================================
-    // 7. OVERLAYS DE SESSÃO DA FEIRA: INATIVIDADE E OFFLINE
-    // =========================================================================
     drawSessionOverlays(ctx) {
       const W = PR.CFG.W, H = PR.CFG.H;
 

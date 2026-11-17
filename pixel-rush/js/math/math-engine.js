@@ -1,12 +1,3 @@
-/* Motor Matemático Procedural — PIXEL RUSH: MATHEMATICS OVERDRIVE
- * Perguntas simples, diretas e acessíveis para todas as idades na Feira de Matemática,
- * cobrindo as 5 mecânicas do jogo:
- *   A. PORTAL     — Operações simples (+, -, ×, ÷, %, potências básicas, raízes e equações simples)
- *   B. NITRO      — Operações rápidas para carregar o Super Nitro
- *   C. FUEL       — Soma simples de porcentagem do tanque de combustível (%)
- *   D. KINEMATICS — Velocidade, distância e tempo com números redondos e fáceis
- *   E. SURPRISE   — Sequências numéricas fáceis (2 em 2, 5 em 5, 10 em 10, dobro)
- */
 (function () {
   'use strict';
   const PR = window.PR;
@@ -22,14 +13,12 @@
       this.seqIndex = 0;
     },
 
-    // Dificuldade suave (1=FÁCIL, 2=MÉDIO, 3=DESAFIO ACESSÍVEL)
     computeDifficulty(progress, streak) {
       if (progress < 0.35 && streak < 3) return 1;
       if (progress < 0.70 && streak < 6) return 2;
       return U.chance(0.5) ? 2 : 3;
     },
 
-    // Gera 2 alternativas erradas plausíveis, bem distintas da resposta certa
     makeNumericOptions(correct, unit, opts) {
       opts = opts || {};
       const minVal = opts.min !== undefined ? opts.min : 1;
@@ -67,7 +56,6 @@
       return { values, labels, correctPortal };
     },
 
-    // MECÂNICA A & B: Operações bem simples e diretas
     genOperation(diff, isNitro) {
       const subTypes = diff === 1
         ? ['add', 'sub', 'mul']
@@ -154,7 +142,7 @@
         opLabel = 'RAIZ QUADRADA';
         context = 'QUAL NÚMERO VEZES ELE MESMO DÁ ' + n + '?';
       } else {
-        // Equações bem diretas: X + a = b  ou  2X = b
+
         if (U.chance(0.6)) {
           correct = U.randi(3, 12);
           const a = U.randi(2, 10);
@@ -190,7 +178,6 @@
       };
     },
 
-    // MECÂNICA C: Combustível com números redondos (múltiplos de 10% ou 5%)
     genFuelChallenge(diff, playerFuelPct) {
       const tank = U.clamp(Math.round((playerFuelPct || 50) / 10) * 10, 20, 70);
       const gallon = U.pick([10, 20, 25, 30]);
@@ -212,7 +199,6 @@
       };
     },
 
-    // MECÂNICA D: Velocidade e Distância bem simples
     genKinematics(diff) {
       const templates = [
         () => {
@@ -267,7 +253,6 @@
       };
     },
 
-    // MECÂNICA E: Desafios Surpresa super intuitivos
     genSurprise(diff) {
       const templates = [
         () => ({

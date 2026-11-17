@@ -1,4 +1,3 @@
-/* Entrada: teclado + mouse/toque, com mapeamento de ações */
 (function () {
   'use strict';
   const PR = window.PR;
@@ -42,7 +41,7 @@
         const p = this.toLocal(e.clientX, e.clientY);
         this.mouse.x = p.x; this.mouse.y = p.y; this.mouse.moved = true;
         const dx = e.clientX - this._lastMove.x, dy = e.clientY - this._lastMove.y;
-        if (dx * dx + dy * dy > 64) { // movimento significativo conta como interação
+        if (dx * dx + dy * dy > 64) { 
           this._lastMove.x = e.clientX; this._lastMove.y = e.clientY;
           this.emit('move', e);
         }
@@ -77,7 +76,7 @@
     mouseIn(x, y, w, h) { const m = this.mouse; return m.x >= x && m.x < x + w && m.y >= y && m.y < y + h; },
     consume() { this.pressed = {}; this.mouse.clicked = false; },
     endFrame() { this.pressed = {}; this.mouse.clicked = false; this.mouse.moved = false; },
-    // usado pelo autoteste
+
     _simulate(code, isDown) {
       if (isDown) { if (!this.down[code]) this.pressed[code] = true; this.down[code] = true; }
       else this.down[code] = false;
@@ -85,4 +84,3 @@
   };
   PR.Input = Input;
 })();
-

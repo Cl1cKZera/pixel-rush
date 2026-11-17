@@ -1,8 +1,3 @@
-/* Sistema de Áudio Procedural via Web Audio API:
- * - Música eletrônica Synthwave/Arcade em loop (baixo, arpejo, lead e bateria)
- * - Som contínuo de motor com modulação por velocidade, aceleração e nitro
- * - Efeitos sonoros: colisão, moeda, combustível, acerto/erro matemático, largada, fim de corrida e UI
- * - Inicia estritamente após a primeira interação do usuário */
 (function () {
   'use strict';
   const PR = window.PR;
@@ -19,12 +14,12 @@
     engGain: null,
     engFilter: null,
     unlocked: false,
-    musicMode: 'menu', // 'menu' | 'race' | 'off'
+    musicMode: 'menu', 
     step: 0,
     stepTimer: 0,
 
     init() {
-      // Desbloqueia o Web Audio API somente na primeira interação válida do usuário
+
       const unlock = () => {
         if (!this.unlocked) this.ensureContext();
         if (this.ctx && this.ctx.state === 'suspended') {
@@ -49,13 +44,11 @@
         this.sfxGain.connect(this.masterGain);
         this.masterGain.connect(this.ctx.destination);
 
-        // Buffer de ruído branco para bateria, explosões e vento do nitro
         const len = this.ctx.sampleRate * 1.5;
         this.noiseBuf = this.ctx.createBuffer(1, len, this.ctx.sampleRate);
         const data = this.noiseBuf.getChannelData(0);
         for (let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
 
-        // Osciladores contínuos do motor
         this.engOsc1 = this.ctx.createOscillator();
         this.engOsc2 = this.ctx.createOscillator();
         this.engFilter = this.ctx.createBiquadFilter();
@@ -110,7 +103,6 @@
       this.syncVolumes();
     },
 
-    // Atualiza o ronco do motor em tempo real conforme a velocidade e aceleração
     updateEngine(active, speedRatio, accelerating, nitroActive) {
       if (!this.ctx || !this.engGain) return;
       const now = this.ctx.currentTime;
@@ -119,7 +111,7 @@
         return;
       }
       const baseFreq = 46 + speedRatio * 95 + (accelerating ? 14 : 0) + (nitroActive ? 36 : 0);
-      // Simula trocas de marcha sutis
+
       const gearMod = ((speedRatio * 4) % 1) * 18;
       const f1 = baseFreq + gearMod;
       this.engOsc1.frequency.setTargetAtTime(f1, now, 0.04);
@@ -129,7 +121,6 @@
       this.engGain.gain.setTargetAtTime(vol, now, 0.05);
     },
 
-    // Utilitário interno para tocar notas sintetizadas
     tone(freq, dur, type, vol, slideTo, delay, dest) {
       if (!this.ctx || PR.Storage.settings.muted) return;
       const t0 = this.ctx.currentTime + (delay || 0);
@@ -150,7 +141,6 @@
       osc.stop(t0 + dur + 0.02);
     },
 
-    // Utilitário interno para ruído filtrado (explosões, caixa de bateria, jato de nitro)
     noise(dur, filterFreq, filterType, vol, delay, dest) {
       if (!this.ctx || !this.noiseBuf || PR.Storage.settings.muted) return;
       const t0 = this.ctx.currentTime + (delay || 0);
@@ -169,7 +159,6 @@
       src.stop(t0 + dur + 0.02);
     },
 
-    // Efeitos sonoros do jogo
     sfx(name) {
       if (!this.unlocked) this.ensureContext();
       if (!this.ctx || PR.Storage.settings.muted) return;
@@ -182,8 +171,8 @@
           this.tone(440, 0.035, 'triangle', 0.08, 520);
           break;
         case 'coin':
-          this.tone(987.77, 0.07, 'square', 0.22); // B5
-          this.tone(1318.5, 0.18, 'square', 0.22, null, 0.065); // E6
+          this.tone(987.77, 0.07, 'square', 0.22); 
+          this.tone(1318.5, 0.18, 'square', 0.22, null, 0.065); 
           break;
         case 'fuel':
           this.tone(330, 0.09, 'triangle', 0.25, 440, 0);
@@ -209,14 +198,14 @@
           this.tone(880, 0.11, 'sine', 0.18, 1174.66, 0.06);
           break;
         case 'math_ok':
-          // Fanfarra arcade ascendente (Dó - Mi - Sol - Dó6)
+
           this.tone(523.25, 0.09, 'square', 0.24, null, 0);
           this.tone(659.25, 0.09, 'square', 0.24, null, 0.07);
           this.tone(783.99, 0.09, 'square', 0.24, null, 0.14);
           this.tone(1046.5, 0.26, 'square', 0.28, 1100, 0.21);
           break;
         case 'math_bad':
-          // Buzzer descendente duplo
+
           this.tone(220, 0.16, 'sawtooth', 0.28, 155, 0);
           this.tone(175, 0.28, 'sawtooth', 0.30, 110, 0.15);
           break;
@@ -243,7 +232,6 @@
       }
     },
 
-    // Sequenciador Synthwave em loop (16 passos por compasso)
     update(dt, mode, speedBoost) {
       this.musicMode = mode || 'menu';
       if (!this.unlocked || !this.ctx || PR.Storage.settings.muted || this.musicMode === 'off') return;
@@ -256,16 +244,13 @@
       const s = this.step % 32;
       this.step = (this.step + 1) % 64;
 
-      // Progressão Synthwave em Lá menor (Am - F - C - G)
       const bassRoots = [110, 110, 110, 110, 110, 110, 110, 110, 87.31, 87.31, 87.31, 87.31, 87.31, 87.31, 87.31, 87.31,
                          130.81, 130.81, 130.81, 130.81, 130.81, 130.81, 130.81, 130.81, 98.0, 98.0, 98.0, 98.0, 98.0, 98.0, 98.0, 98.0];
       const root = bassRoots[s];
       const octave = (s % 2 === 1) ? 2 : 1;
 
-      // Baixo pulsante em colcheias/semicolcheias
       this.tone(root * octave, stepDur * 0.85, 'sawtooth', 0.18, root * 0.98, 0, this.musicGain);
 
-      // Bateria eletrônica (Bumbo nos tempos pares, Caixa nos tempos 4/12, Chimbal contínuo)
       if (s % 4 === 0) {
         this.tone(125, 0.11, 'sine', 0.35, 36, 0, this.musicGain);
       }
@@ -275,7 +260,6 @@
         this.noise(0.035, 5200, 'highpass', 0.08, 0, this.musicGain);
       }
 
-      // Arpejo / Melodia Lead Neon
       const arpNotes = [
         440, 523.25, 659.25, 880, 659.25, 523.25, 440, 523.25,
         349.23, 440, 523.25, 698.46, 523.25, 440, 349.23, 440,
@@ -291,4 +275,3 @@
 
   PR.Audio = AudioSys;
 })();
-

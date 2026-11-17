@@ -1,4 +1,3 @@
-/* Persistência local: recordes e configurações (LocalStorage com fallback em memória) */
 (function () {
   'use strict';
   const PR = window.PR;
@@ -59,4 +58,3 @@
     _key: KEY
   };
 })();
-

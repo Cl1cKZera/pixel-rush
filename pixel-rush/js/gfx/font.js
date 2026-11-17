@@ -1,5 +1,3 @@
-/* Fonte bitmap pixelada própria (5x7) com acentos do português e símbolos matemáticos.
- * Renderização via atlas + cache de cores, nítida em qualquer escala inteira. */
 (function () {
   'use strict';
   const PR = window.PR;
@@ -185,7 +183,6 @@
     }
   }
 
-  /* opções: color, scale, align ('left'|'center'|'right'), shadow (cor|true), outline (cor), alpha */
   function text(ctx, str, x, y, o) {
     o = o || {};
     if (!atlas) build();
@@ -220,7 +217,6 @@
     return lines;
   }
 
-  /* Logotipo: gradiente vertical, contorno, extrusão 3D e itálico (skew) — resultado em cache */
   function logo(str, s, stops, o) {
     o = o || {};
     const key = [str, s, stops.join('|'), o.skew, o.extrude, o.outline].join('#');
@@ -249,7 +245,7 @@
     const lg = gx.createLinearGradient(0, pad, 0, pad + th);
     stops.forEach((c, i) => lg.addColorStop(i / (stops.length - 1), c));
     gx.fillStyle = lg; gx.fillRect(0, 0, W, H);
-    // faixa de brilho horizontal (estilo cromado arcade)
+
     gx.fillStyle = 'rgba(255,255,255,0.55)';
     gx.fillRect(0, pad + Math.floor(th * 0.28), W, Math.max(1, Math.floor(s / 2)));
     cx.drawImage(grad, 0, 0);
@@ -266,4 +262,3 @@
 
   PR.Font = { build, text, measure, wrap, logo, tinted: (c) => { if (!atlas) build(); return tinted(c); } };
 })();
-

@@ -1,14 +1,12 @@
-/* Controlador Principal de Gameplay e Máquina de Estados — PIXEL RUSH: MATHEMATICS OVERDRIVE */
 (function () {
   'use strict';
   const PR = window.PR;
   const U = PR.U;
 
   const Game = {
-    state: 'MENU', // 'MENU' | 'HOWTO' | 'RECORDS' | 'COUNTDOWN' | 'PLAYING' | 'PAUSED' | 'RESULTS'
+    state: 'MENU', 
     player: null,
 
-    // Dados da partida atual
     score: 0,
     distancePx: 0,
     distanceKm: 0,
@@ -23,17 +21,14 @@
     mathStreak: 0,
     currentDifficulty: 1,
 
-    // Pausa Tática do Portal Matemático ("Pausa para Pensar" + Detector AFK)
     mathPauseActive: false,
     mathPortalRef: null,
     mathAfkTimer: 25,
 
-    // Feedback de banner pós-portal
     lastBannerText: '',
     lastBannerColor: '#00f5d4',
     lastBannerTimer: 0,
 
-    // Resultados consolidados da última partida
     lastResults: null,
 
     init() {
@@ -42,7 +37,6 @@
       this.state = 'MENU';
     },
 
-    // Limpa todos os dados da partida e objetos ativos sem apagar recordes nem configurações
     clearMatchState() {
       this.score = 0;
       this.distancePx = 0;
@@ -71,7 +65,6 @@
       PR.Audio.updateEngine(false, 0, false, false);
     },
 
-    // Reinicialização completa de sessão (Seção 9 e AFK na pergunta)
     resetSessionToMenu() {
       this.clearMatchState();
       this.lastResults = null;
@@ -79,7 +72,6 @@
       PR.UI.menuSelected = 0;
     },
 
-    // Inicia imediatamente uma nova partida com contagem regressiva de 3 segundos
     startMatch() {
       this.clearMatchState();
       this.state = 'COUNTDOWN';
@@ -97,25 +89,23 @@
       }
     },
 
-    // Ativa a Pausa Tática quando os 3 portais chegam na frente do jogador
     enterMathPause(pw) {
       this.mathPauseActive = true;
       this.mathPortalRef = pw;
       this.mathAfkTimer = PR.CFG.MATH_AFK_TIMEOUT;
-      // Alinha o carro perfeitamente com o centro de um dos 3 portais (ESQ=faixa 1, CEN=faixa 2, DIR=faixa 3)
+
       const zIdx = PR.Traffic.playerZoneIndex(this.player.x);
       this.player.lane = PR.Traffic.PORTAL_ZONES[zIdx].lane;
       PR.Audio.sfx('math_appear');
       PR.Audio.updateEngine(false, 0, false, false);
     },
 
-    // Confirma o portal escolhido pelo jogador durante a Pausa para Pensar e dispara o carro!
     confirmMathChoice(zoneIdx) {
       if (!this.mathPauseActive || !this.mathPortalRef) return;
       const z = PR.Traffic.PORTAL_ZONES[U.clamp(zoneIdx, 0, 2)];
       this.player.lane = z.lane;
       this.player.x = z.cx;
-      // Se algum carro estava parado exatamente no meio do portal escolhido, move-o para a faixa vizinha sem sumir da tela
+
       for (const v of PR.Traffic.vehicles) {
         if (v.lane === z.lane && v.y > 135 && v.y < 335) {
           v.lane = (z.lane + 1) % PR.CFG.LANES;
@@ -134,7 +124,6 @@
       PR.Audio.sfx('click');
     },
 
-    // Resolução de um Portal Matemático atravessado pelo jogador
     onPortalResolved(ch, isCorrect, chosenIdx) {
       this.mathPauseActive = false;
       this.mathPortalRef = null;
@@ -428,13 +417,11 @@
         return;
       }
 
-      // Estado PLAYING
       if (PR.Input.hit('pause')) {
         this.togglePause();
         return;
       }
 
-      // Se estiver na PAUSA DO PORTAL MATEMÁTICO ("Pausa para Pensar"):
       if (this.mathPauseActive) {
         PR.Traffic.animTime += dt;
         PR.Audio.update(dt, 'menu', false);
@@ -442,7 +429,6 @@
         const zones = PR.Traffic.PORTAL_ZONES;
         let zIdx = PR.Traffic.playerZoneIndex(this.player.x);
 
-        // Permite mover o carro entre os 3 portais com A/D ou Setas Esquerda/Direita
         if (PR.Input.hit('left')) {
           zIdx = Math.max(0, zIdx - 1);
           this.player.lane = zones[zIdx].lane;
@@ -457,12 +443,10 @@
           PR.Audio.sfx('hover');
         }
 
-        // Desliza o carro suavemente até a frente do portal selecionado
         const targetX = U.laneX(this.player.lane);
         this.player.x = U.damp(this.player.x, targetX, 18, dt);
         if (Math.abs(this.player.x - targetX) < 2) this.player.bank = 0;
 
-        // Teclas 1, 2 ou 3 escolhem e já confirmam o portal imediatamente
         if (PR.Input.hit('portal1')) {
           this.confirmMathChoice(0);
           return;
@@ -474,13 +458,11 @@
           return;
         }
 
-        // W, Seta p/ Cima, ESPAÇO ou ENTER confirmam o portal em que o carro está alinhado!
         if (PR.Input.hit('up') || PR.Input.hit('confirm')) {
           this.confirmMathChoice(zIdx);
           return;
         }
 
-        // Se o jogador ficar muito tempo AFK durante a pausa da pergunta, reseta pro Menu Inicial!
         this.mathAfkTimer -= dt;
         if (this.mathAfkTimer <= 0) {
           PR.Audio.sfx('gameover');

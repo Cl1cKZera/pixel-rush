@@ -1,13 +1,8 @@
-/* Sistema Pseudo-3D de Tráfego, Postes Laterais, Coletáveis e Pórticos de Portais Matemáticos
- * Unificado em 3 Faixas Largas (0 = Esquerda, 1 = Centro, 2 = Direita):
- * - Cada carro adversário anda perfeitamente no centro de uma das 3 faixas e cresce na mesma proporção do jogador!
- * - Os 3 Portais Matemáticos (ESQ | CEN | DIR) correspondem 1-para-1 às 3 faixas da rodovia! */
 (function () {
   'use strict';
   const PR = window.PR;
   const U = PR.U;
 
-  // As 3 Faixas Largas da rodovia 3D são exatamente as 3 Zonas de Portal!
   const PORTAL_ZONES = [
     { x0: 90,  x1: 245, cx: 155, lane: 0, lp0: -0.98, lp1: -0.333, lpc: -0.667, label: 'ESQ', keyHint: '1' },
     { x0: 245, x1: 395, cx: 320, lane: 1, lp0: -0.333, lp1:  0.333, lpc:  0.000, label: 'CEN', keyHint: '2' },
@@ -70,7 +65,6 @@
       return true;
     },
 
-    // Gera no máximo 1 ou 2 veículos nas 3 faixas, deixando sempre pelo menos 1 faixa 100% livre!
     spawnTrafficWave(progress) {
       const spawnY = -40;
       if (this.nearPortal(spawnY, 155)) return;
@@ -82,7 +76,7 @@
 
       for (let i = 0; i < chosen.length; i++) {
         const lane = chosen[i];
-        // Escalonamento vertical entre os carros para nunca parecerem "colados" lado a lado
+
         const y = spawnY - i * U.rand(45, 75);
         if (!this.isLaneFree(lane, y, 95)) continue;
 
@@ -115,7 +109,6 @@
         spd = U.rand(122, 160) + progress * 12;
       }
 
-      // Se já houver um veículo na mesma faixa, sincroniza a velocidade para nunca se atravessarem
       for (const other of this.vehicles) {
         if (other.lane === lane) {
           spd = other.speed;
@@ -197,7 +190,7 @@
 
     spawnPortalWave(challenge) {
       const y = -40;
-      // Mantém todos os carros visíveis na pista; limpa apenas se algum acabou de nascer colado no pórtico lá no horizonte (y < -5)
+
       this.obstacles = this.obstacles.filter((o) => o.y > -5 || Math.abs(o.y - y) > 55);
       this.vehicles = this.vehicles.filter((v) => v.y > -5 || Math.abs(v.y - y) > 65);
 
@@ -213,7 +206,6 @@
       });
     },
 
-    // Mapeia coordenada lógica y (-40 no horizonte .. 314 no jogador) para profundidade d (0.015 .. 0.772)
     yToDepth(y) {
       return U.clamp(0.015 + ((y + 40) / 354) * 0.757, 0.015, 1.06);
     },
@@ -258,13 +250,11 @@
         }
       }
 
-      // Atualiza Pórticos dos Portais Matemáticos
       for (let i = this.portals.length - 1; i >= 0; i--) {
         const pw = this.portals[i];
         const portalSpd = pw.lockedIn ? Math.max(roadSpeed * 1.45, 440) : Math.min(roadSpeed * 0.78, 235);
         pw.y += portalSpd * dt;
 
-        // Pausa Tática quando o pórtico chega em y >= 152 (mantendo todos os outros carros visíveis na pista!)
         if (!pw.pausedOnce && !pw.resolved && pw.y >= 152) {
           pw.y = 152;
           pw.pausedOnce = true;
@@ -286,7 +276,6 @@
         }
       }
 
-      // Atualiza Veículos de Tráfego (movimento 100% proporcional à escala de perspectiva da pista!)
       for (let i = this.vehicles.length - 1; i >= 0; i--) {
         const v = this.vehicles[i];
         const d = this.yToDepth(v.y);
@@ -294,7 +283,6 @@
         const relSpeed = Math.max(50, roadSpeed - v.speed) * perspScale;
         v.y += relSpeed * dt;
 
-        // Mantém distância segura entre carros na mesma faixa sem saltos de velocidade
         for (let j = 0; j < this.vehicles.length; j++) {
           if (i === j) continue;
           const other = this.vehicles[j];
@@ -322,7 +310,6 @@
         }
       }
 
-      // Atualiza Obstáculos (mesma progressão de perspectiva dos carros)
       for (let i = this.obstacles.length - 1; i >= 0; i--) {
         const o = this.obstacles[i];
         const d = this.yToDepth(o.y);
@@ -345,7 +332,6 @@
         }
       }
 
-      // Atualiza Coletáveis (mesma progressão de perspectiva dos carros)
       for (let i = this.items.length - 1; i >= 0; i--) {
         const it = this.items[i];
         const d = this.yToDepth(it.y);
@@ -373,7 +359,6 @@
       }
     },
 
-    // Desenha um Pórtico Eletrônico de Rodovia em 3D (sem paredes quadradas saindo da pista!)
     drawPortal3D(ctx, pw, playerZone) {
       const d = this.yToDepth(pw.y);
       const dBack = Math.max(0.02, d - 0.05);
@@ -387,17 +372,14 @@
       const archH = Math.round(54 * s);
       const beamH = Math.max(14, Math.round(24 * s));
 
-      // Pilares laterais metálicos do Pórtico da Rodovia (fora da pista, no acostamento)
       const pilW = Math.max(3, Math.round(6 * s));
       ctx.fillStyle = '#2b3452';
       ctx.fillRect(Math.round(pLeft.x - pilW), py - archH - beamH, pilW, archH + beamH);
       ctx.fillRect(Math.round(pRight.x), py - archH - beamH, pilW, archH + beamH);
 
-      // Treliça metálica horizontal ligando os 3 painéis eletrônicos
       ctx.fillStyle = '#1b2038';
       ctx.fillRect(Math.round(pLeft.x - pilW), py - archH - beamH, Math.round(pRight.x - pLeft.x + pilW * 2), beamH);
 
-      // Desenha cada um dos 3 Portais exatamente alinhado com as 3 faixas em perspectiva trapezoidal!
       for (let idx = 0; idx < 3; idx++) {
         const z = PORTAL_ZONES[idx];
         const isChosen = pw.resolved && pw.chosenIndex === idx;
@@ -409,7 +391,6 @@
           gateCol = isRight ? '#38b000' : (isChosen ? '#ff0055' : '#495057');
         }
 
-        // Tapete luminoso trapezoidal no asfalto seguindo a perspectiva exata da faixa!
         const bL = PR.Background.project(z.lp0 + 0.02, dBack);
         const bR = PR.Background.project(z.lp1 - 0.02, dBack);
         const fL = PR.Background.project(z.lp0 + 0.02, dFront);
@@ -424,12 +405,10 @@
         ctx.closePath();
         ctx.fill();
 
-        // Bordas laterais laser no piso da faixa
         ctx.strokeStyle = isAimed ? '#ffffff' : gateCol;
         ctx.lineWidth = isAimed ? 2 : 1;
         ctx.stroke();
 
-        // Painel Eletrônico Superior acima da faixa
         const g0 = PR.Background.project(z.lp0, d);
         const g1 = PR.Background.project(z.lp1, d);
         const gc = PR.Background.project(z.lpc, d);
@@ -437,11 +416,9 @@
         const gx1 = Math.round(g1.x) - 2;
         const gw = Math.max(12, gx1 - gx0);
 
-        // Feixe vertical translúcido sutil nas divisórias
         ctx.fillStyle = U.rgba(gateCol, isAimed ? 0.18 : 0.08);
         ctx.fillRect(gx0, py - archH, gw, archH);
 
-        // Placa LED da resposta no pórtico
         const signY = py - archH - beamH;
         ctx.fillStyle = isAimed ? 'rgba(20, 32, 72, 0.98)' : 'rgba(8, 10, 26, 0.96)';
         ctx.fillRect(gx0, signY, gw, beamH);
@@ -467,7 +444,6 @@
       const curChallenge = this.currentChallenge();
       const playerZone = this.playerZoneIndex(PR.Player.x);
 
-      // 0. Guia luminosa suave no asfalto indicando a faixa escolhida pelo conversível
       if (curChallenge) {
         const z = PORTAL_ZONES[playerZone];
         const col = playerZone === 0 ? '#00f5d4' : playerZone === 1 ? '#ffd60a' : '#ff007f';
@@ -486,7 +462,6 @@
         ctx.fill();
       }
 
-      // 1. Ordena todos os objetos 3D por profundidade (do horizonte d=0.02 até a câmera d=1.0)
       const drawables = [];
 
       for (const rp of PR.Background.roadProps) {
@@ -507,7 +482,6 @@
 
       drawables.sort((a, b) => a.d - b.d);
 
-      // 2. Renderiza em perspectiva 3D
       for (const item of drawables) {
         const d = item.d;
         if (d < 0.02 || d > 1.08) continue;
@@ -572,7 +546,7 @@
             const arr = sp.cars[v.kind];
             img = arr[v.variant % arr.length][wf];
           }
-          // Proporção 1:1 com o carro principal na mesma profundidade!
+
           const w = Math.max(8, Math.round(img.width * s));
           const h = Math.max(6, Math.round(img.height * s));
           ctx.drawImage(img, Math.round(proj.x - w * 0.5), Math.round(proj.y - h), w, h);

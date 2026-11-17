@@ -1,4 +1,3 @@
-/* Sistema de Partículas, Linhas de Velocidade, Textos Flutuantes, Marcas de Pneu e Efeitos de Câmera */
 (function () {
   'use strict';
   const PR = window.PR;
@@ -28,7 +27,7 @@
       this.shakeX = 0;
       this.shakeY = 0;
       this.flashAlpha = 0;
-      // Pré-popula linhas de velocidade sutis nas laterais
+
       for (let i = 0; i < 24; i++) {
         this.speedLines.push({
           x: U.chance(0.5) ? U.rand(8, PR.CFG.ROAD_L - 12) : U.rand(PR.CFG.ROAD_R + 12, PR.CFG.W - 8),
@@ -72,7 +71,6 @@
       this.rings.push({ x, y, r: 4, maxR: maxR || 42, color: color || '#00f5d4', life: 0, maxLife: 0.42 });
     },
 
-    // Fumaça / Chama de escapamento do jogador
     spawnExhaust(x, y, nitroActive, speedRatio) {
       const count = nitroActive ? 3 : 1;
       for (let i = 0; i < count; i++) {
@@ -94,7 +92,6 @@
       }
     },
 
-    // Explosão de faíscas e destroços em colisões
     spawnCrash(x, y) {
       this.addRing(x, y, '#ff0055', 52);
       this.addRing(x, y, '#ffbe0b', 34);
@@ -116,7 +113,6 @@
       }
     },
 
-    // Brilho ao coletar moedas, combustível, nitro ou acertar portal
     spawnBurst(x, y, palette, count) {
       const cols = palette || ['#ffd60a', '#ffffff', '#00f5d4'];
       const n = count || 18;
@@ -139,7 +135,7 @@
     },
 
     update(dt, roadSpeed, nitroActive) {
-      // Atualiza tremor de câmera
+
       if (this.shakeTime > 0) {
         this.shakeTime = Math.max(0, this.shakeTime - dt);
         const m = this.shakeMag * (this.shakeTime / 0.3);
@@ -151,7 +147,6 @@
         this.flashAlpha = Math.max(0, this.flashAlpha - dt * 1.8);
       }
 
-      // Marcas de pneu no asfalto
       for (let i = this.skids.length - 1; i >= 0; i--) {
         const s = this.skids[i];
         s.y += roadSpeed * dt;
@@ -159,7 +154,6 @@
         if (s.life <= 0 || s.y > PR.CFG.H + 20) this.skids.splice(i, 1);
       }
 
-      // Anéis de choque / energia
       for (let i = this.rings.length - 1; i >= 0; i--) {
         const r = this.rings[i];
         r.life += dt;
@@ -167,7 +161,6 @@
         if (r.life >= r.maxLife) this.rings.splice(i, 1);
       }
 
-      // Partículas
       for (let i = this.list.length - 1; i >= 0; i--) {
         const p = this.list[i];
         p.life += dt;
@@ -180,7 +173,6 @@
         p.y += p.vy * dt;
       }
 
-      // Textos flutuantes
       for (let i = this.popups.length - 1; i >= 0; i--) {
         const pop = this.popups[i];
         pop.life += dt;
@@ -189,7 +181,6 @@
         if (pop.life >= pop.maxLife) this.popups.splice(i, 1);
       }
 
-      // Linhas de velocidade
       const spdFactor = U.clamp((roadSpeed - 240) / 350, 0, 1.5) + (nitroActive ? 0.7 : 0);
       for (const sl of this.speedLines) {
         sl.y += (roadSpeed * 1.45 + 180) * dt;
@@ -202,7 +193,7 @@
     },
 
     drawRoadLayer(ctx) {
-      // Desenha marcas de pneu no asfalto antes dos carros
+
       for (const s of this.skids) {
         ctx.fillStyle = s.col;
         ctx.fillRect(Math.round(s.x - 7), Math.round(s.y), 3, 5);
@@ -211,7 +202,7 @@
     },
 
     drawTopLayer(ctx) {
-      // Linhas de velocidade nas laterais da rodovia 3D (abaixo do horizonte)
+
       const hy = (PR.Background && PR.Background.HORIZON_Y) ? PR.Background.HORIZON_Y : 196;
       for (const sl of this.speedLines) {
         if (!sl.alpha || sl.alpha < 0.05 || sl.y < hy) continue;
@@ -221,7 +212,6 @@
       }
       ctx.globalAlpha = 1;
 
-      // Anéis de energia
       for (const r of this.rings) {
         const a = 1 - r.life / r.maxLife;
         ctx.strokeStyle = U.rgba(r.color, a);
@@ -231,7 +221,6 @@
         ctx.stroke();
       }
 
-      // Partículas
       for (const p of this.list) {
         const a = 1 - p.life / p.maxLife;
         ctx.globalAlpha = U.clamp(a * 1.2, 0, 1);
@@ -241,7 +230,6 @@
       }
       ctx.globalAlpha = 1;
 
-      // Textos flutuantes (pontuação, acertos matemáticos, bônus)
       for (const pop of this.popups) {
         const a = pop.life < 0.8 ? 1 : 1 - (pop.life - 0.8) / (pop.maxLife - 0.8);
         PR.Font.text(ctx, pop.text, pop.x, pop.y, {
@@ -262,7 +250,6 @@
         }
       }
 
-      // Flash de tela (colisão, nitro ou portal)
       if (this.flashAlpha > 0.01) {
         ctx.fillStyle = U.rgba(this.flashColor, this.flashAlpha);
         ctx.fillRect(0, 0, PR.CFG.W, PR.CFG.H);
@@ -272,4 +259,3 @@
 
   PR.Particles = Particles;
 })();
-
