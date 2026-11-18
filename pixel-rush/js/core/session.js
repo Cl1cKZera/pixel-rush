@@ -75,8 +75,15 @@
         }
       }
 
-      if (!this.warningActive) {
+      const inMatch = (gameState === 'PLAYING' || gameState === 'PAUSED' || gameState === 'COUNTDOWN');
+      if (!inMatch) {
+        this.idleTime = 0;
+        this.warningActive = false;
+        this.warningLeft = PR.CFG.IDLE_WARNING;
+        return;
+      }
 
+      if (!this.warningActive) {
         this.idleTime += dt;
         if (this.idleTime >= PR.CFG.IDLE_TIMEOUT) {
           this.warningActive = true;
